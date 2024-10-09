@@ -82,10 +82,10 @@ class DbTestScreen extends StatelessWidget {
                               'Мое портфолио включает в себя разнообразные проекты, от концептуального дизайна до финальной визуализации, демонстрируя мою способность превращать идеи в захватывающие 3D-изображения.'
                         },
                         mediaLinks: MediaLinks(
-                          artstation: 'https://artstation.com/johndoe',
-                          tg: 'https://t.me/johndoe',
-                          vk: 'https://vk.com/johndoe',
-                          inst: 'https://instagram.com/johndoe',
+                          artstation: 'https://artstation.com/adem',
+                          tg: 'https://t.me/telegramtips',
+                          vk: 'https://vk.com/vk',
+                          inst: 'https://instagram.com/vk',
                         ),
                       );
                       await dbProvider.addUser(newUser);
@@ -109,10 +109,10 @@ class DbTestScreen extends StatelessWidget {
                               'Мое портфолио включает в себя разнообразные проекты, от концептуального дизайна до финальной визуализации, демонстрируя мою способность превращать идеи в захватывающие 3D-изображения.'
                         },
                         mediaLinks: MediaLinks(
-                          artstation: 'https://artstation.com/johndoe1',
-                          tg: 'https://t.me/johndoe1',
-                          vk: 'https://vk.com/johndoe1',
-                          inst: 'https://instagram.com/johndoe1',
+                          artstation: 'https://artstation.com/adem1',
+                          tg: 'https://t.me/telegramtips',
+                          vk: 'https://vk.com/vk',
+                          inst: 'https://instagram.com/vk',
                         ),
                       );
                       await dbProvider.updateUser(updatedUser);

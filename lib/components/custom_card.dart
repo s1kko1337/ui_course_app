@@ -79,7 +79,9 @@ class CustomCard extends StatelessWidget {
         ],
       ),
       height: height, // Используем переданное значение высоты
-      width: screenWidth * 0.9, // Используем переданное значение ширины
+      width: width == 140
+          ? 140
+          : screenWidth * 0.9, // Используем переданное значение ширины
       child: Center(
         child: child,
       ),

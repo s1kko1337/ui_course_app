@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+//TODO Шаблонизировать функции для запросов к базе, чтобы они работали в зависимости от типа принятого объекта
 class DB {
   late final connection;
   final connWeb = Endpoint(

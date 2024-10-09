@@ -53,7 +53,7 @@ class MainScreenState extends State<MainScreen> {
     final dbProvider = Provider.of<DbProvider>(context);
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,19 +62,20 @@ class MainScreenState extends State<MainScreen> {
                 future: dbProvider.getUser(1),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return CustomCard(
-                        height: 313,
-                        width: 369,
-                        child: Center(
-                            child: DefaultText(
-                                text: 'Такой пользователь не найден')));
+                    return const CustomCard(
+                      height: 313,
+                      width: 369,
+                      child: Center(
+                        child:
+                            DefaultText(text: 'Такой пользователь не найден'),
+                      ),
+                    );
                   } else {
-                    final user =
-                        snapshot.data!.first; // Since you're fetching one user
+                    final user = snapshot.data!.first;
 
                     return CustomCard(
                       height: 313,
@@ -91,19 +92,20 @@ class MainScreenState extends State<MainScreen> {
                 future: dbProvider.getUser(1),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return CustomCard(
-                        height: 313,
-                        width: 369,
-                        child: Center(
-                            child: DefaultText(
-                                text: 'Такой пользователь не найден')));
+                    return const CustomCard(
+                      height: 313,
+                      width: 369,
+                      child: Center(
+                        child:
+                            DefaultText(text: 'Такой пользователь не найден'),
+                      ),
+                    );
                   } else {
-                    final user =
-                        snapshot.data!.first; // Since you're fetching one user
+                    final user = snapshot.data!.first;
 
                     return CustomCard(
                       height: 313,
@@ -116,7 +118,6 @@ class MainScreenState extends State<MainScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              // Иконка ArtStation
                               IconButton(
                                 icon: Icon(
                                   Icons.art_track,
@@ -126,7 +127,6 @@ class MainScreenState extends State<MainScreen> {
                                     _openLink(user.mediaLinks.artstation),
                                 tooltip: 'Open ArtStation',
                               ),
-                              // Иконка Telegram
                               IconButton(
                                 icon: Icon(
                                   Icons.telegram,
@@ -135,7 +135,6 @@ class MainScreenState extends State<MainScreen> {
                                 onPressed: () => _openLink(user.mediaLinks.tg),
                                 tooltip: 'Open Telegram',
                               ),
-                              // Иконка VK
                               IconButton(
                                 icon: Icon(
                                   Icons.videocam,
@@ -144,7 +143,6 @@ class MainScreenState extends State<MainScreen> {
                                 onPressed: () => _openLink(user.mediaLinks.vk),
                                 tooltip: 'Open VK',
                               ),
-                              // Иконка Instagram
                               IconButton(
                                 icon: Icon(
                                   Icons.camera_alt,

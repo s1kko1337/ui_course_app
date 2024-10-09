@@ -70,8 +70,8 @@ class UserList extends StatelessWidget {
                     ),
                   ],
                 ),
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                padding: EdgeInsets.all(16),
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding: const EdgeInsets.all(16),
                 child: GestureDetector(
                   onTap: () {},
                   child: Column(
@@ -79,7 +79,7 @@ class UserList extends StatelessWidget {
                     children: [
                       DefaultText(text: '${user.id}'),
                       DefaultText(text: user.mainInfo['info']),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       DefaultText(
                         text:
                             '${user.additionalInfo['info']}, ${user.mediaLinks.artstation}',

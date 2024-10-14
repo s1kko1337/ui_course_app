@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class MessageStat {
-  final String id;
+  final int id;
   final Map<String, dynamic> messageBody;
   final String email;
   final DateTime createdAt;

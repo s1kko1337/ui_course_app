@@ -6,38 +6,24 @@ import 'dart:developer';
 import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //TODO Шаблонизировать функции для запросов к базе, чтобы они работали в зависимости от типа принятого объекта
 class DB {
   late final connection;
-  final connWeb = Endpoint(
-    host: '0.0.0.0',
-    database: 'postgres',
-    username: 'postgres',
-    password: 'postgres',
-    port: 5432,
-  );
   final conn = Endpoint(
-    host: '10.0.2.2',
-    database: 'postgres',
-    username: 'postgres',
-    password: 'postgres',
-    port: 5432,
+    host: dotenv.env['DB_HOST']!,
+    database: dotenv.env['DB_NAME']!,
+    username: dotenv.env['DB_USERNAME']!,
+    password: dotenv.env['DB_PASSWORD']!,
+    port: dotenv.getInt('DB_PORT'),
   );
   Future<void> connect() async {
     try {
-      if (kIsWeb) {
-        connection = await Connection.open(
-          connWeb,
-          settings: const ConnectionSettings(sslMode: SslMode.disable),
-        );
-      }
-      if (Platform.isAndroid) {
-        connection = await Connection.open(
-          conn,
-          settings: const ConnectionSettings(sslMode: SslMode.disable),
-        );
-      }
+      connection = await Connection.open(
+        conn,
+        settings: const ConnectionSettings(sslMode: SslMode.disable),
+      );
     } catch (e) {
       log(e.toString());
     }

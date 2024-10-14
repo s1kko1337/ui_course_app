@@ -4,22 +4,23 @@ import 'package:flutter_course_project/models/users.dart';
 import 'package:flutter_course_project/models/works.dart';
 import 'dart:developer';
 import 'dart:convert';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
+// import 'dart:io' show Platform;
+// import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //TODO Шаблонизировать функции для запросов к базе, чтобы они работали в зависимости от типа принятого объекта
 class DB {
-  late final connection;
-  final conn = Endpoint(
-    host: dotenv.env['DB_HOST']!,
-    database: dotenv.env['DB_NAME']!,
-    username: dotenv.env['DB_USERNAME']!,
-    password: dotenv.env['DB_PASSWORD']!,
-    port: dotenv.getInt('DB_PORT'),
-  );
+  late var connection;
   Future<void> connect() async {
     try {
+      await dotenv.load(fileName: ".env");
+      var conn = Endpoint(
+        host: dotenv.env['DB_HOST']!,
+        database: dotenv.env['DB_NAME']!,
+        username: dotenv.env['DB_USERNAME']!,
+        password: dotenv.env['DB_PASSWORD']!,
+        port: int.parse(dotenv.env['DB_PORT']!),
+      );
       connection = await Connection.open(
         conn,
         settings: const ConnectionSettings(sslMode: SslMode.disable),

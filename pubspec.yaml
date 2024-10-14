@@ -67,7 +67,7 @@ flutter:
     - assets/3dmodels/drone.glb
     - assets/3dmodels/guitar.glb
     - assets/3dmodels/room.glb
-  #   - images/a_dot_ham.jpeg
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

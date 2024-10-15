@@ -6,7 +6,7 @@ import 'package:flutter_course_project/colors/root_colors.dart';
 import 'package:flutter_course_project/components/gray_text.dart';
 import 'package:flutter_course_project/components/orange_button_style.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
-import 'package:flutter_course_project/models/users.dart';
+import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:provider/provider.dart';
 
 class UpdateUser extends StatefulWidget {
@@ -27,9 +27,9 @@ class UpdateUserState extends State<UpdateUser> {
   String? _inst;
 
   // Функция для сохранения данных пользователя
-  User? _saveForm(int id) {
+  Portfolios? _saveForm(int id) {
     if (_formKey.currentState!.validate()) {
-      User newUser = User(
+      Portfolios newUser = Portfolios(
         id: id,
         mainInfo: {
           'info': _mainInfo,
@@ -179,13 +179,13 @@ class UpdateUserState extends State<UpdateUser> {
                 }
                 if (_id != null && dbProvider.isConnected) {
                   _formKey.currentState!.save();
-                  final users = await dbProvider.getUsers();
-                  final curentUser = await dbProvider.getUser(_id!);
+                  final users = await dbProvider.getPortfolios();
+                  final curentUser = await dbProvider.getPortfolio(_id!);
                   if (users.isEmpty || curentUser.isEmpty) {
                     return;
                   } else if (_formKey.currentState!.validate()) {
                     final newUser = _saveForm(_id!);
-                    await dbProvider.updateUser(newUser!);
+                    await dbProvider.updatePortfolio(newUser!);
                     log('User w id: $_id updated');
                   }
                 }

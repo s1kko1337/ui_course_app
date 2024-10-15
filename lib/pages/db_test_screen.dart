@@ -6,7 +6,7 @@ import 'package:flutter_course_project/components/gray_text.dart';
 import 'package:flutter_course_project/components/orange_button_style.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
-import 'package:flutter_course_project/models/users.dart';
+import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:flutter_course_project/components/custom_card.dart';
 import 'package:flutter_course_project/colors/root_colors.dart';
 
@@ -48,7 +48,7 @@ class DbTestScreen extends StatelessWidget {
               onPressed: dbProvider.isConnected
                   ? () async {
                       // Получаем пользователей
-                      final users = await dbProvider.getUsers();
+                      final users = await dbProvider.getPortfolios();
 
                       // Выводим информацию о каждом пользователе в лог
                       for (var user in users) {
@@ -64,14 +64,14 @@ class DbTestScreen extends StatelessWidget {
               style: ButtonStyles.elevatedButtonStyle(colors),
               onPressed: dbProvider.isConnected
                   ? () async {
-                      final users = await dbProvider.getUsers();
+                      final users = await dbProvider.getPortfolios();
                       late var idT;
                       if (users.isEmpty) {
-                        idT = 1;
+                        idT = 0;
                       } else {
                         idT = users.last.id + 1;
                       }
-                      User newUser = User(
+                      Portfolios newUser = Portfolios(
                         id: idT,
                         mainInfo: {
                           'info':
@@ -88,7 +88,7 @@ class DbTestScreen extends StatelessWidget {
                           inst: 'https://instagram.com/vk',
                         ),
                       );
-                      await dbProvider.addUser(newUser);
+                      await dbProvider.addPortfolio(newUser);
                     }
                   : null,
               child: const GrayText(text: 'Добавить портфолио'),
@@ -98,7 +98,7 @@ class DbTestScreen extends StatelessWidget {
               style: ButtonStyles.elevatedButtonStyle(colors),
               onPressed: dbProvider.isConnected
                   ? () async {
-                      User updatedUser = User(
+                      Portfolios updatedUser = Portfolios(
                         id: 1,
                         mainInfo: {
                           'info':
@@ -115,7 +115,7 @@ class DbTestScreen extends StatelessWidget {
                           inst: 'https://instagram.com/vk',
                         ),
                       );
-                      await dbProvider.updateUser(updatedUser);
+                      await dbProvider.updatePortfolio(updatedUser);
                     }
                   : null,
               child: const GrayText(text: 'Обновить портфолио'),
@@ -125,11 +125,11 @@ class DbTestScreen extends StatelessWidget {
               style: ButtonStyles.elevatedButtonStyle(colors),
               onPressed: dbProvider.isConnected
                   ? () async {
-                      final users = await dbProvider.getUsers();
+                      final users = await dbProvider.getPortfolios();
                       if (users.isEmpty) {
                       } else {
                         final id = users.last.id;
-                        await dbProvider.deleteUser(id);
+                        await dbProvider.deletePortfolio(id);
                       }
                     }
                   : null,

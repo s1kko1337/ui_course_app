@@ -5,7 +5,7 @@ import 'package:flutter_course_project/colors/root_colors.dart';
 import 'package:flutter_course_project/components/gray_text.dart';
 import 'package:flutter_course_project/components/orange_button_style.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
-import 'package:flutter_course_project/models/users.dart';
+import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:provider/provider.dart';
 
 class RegisterUserForm extends StatefulWidget {
@@ -24,9 +24,9 @@ class RegisterUserFormState extends State<RegisterUserForm> {
   String? _vk;
   String? _inst;
 
-  User? _saveForm(int id) {
+  Portfolios? _saveForm(int id) {
     if (_formKey.currentState!.validate()) {
-      User newUser = User(
+      Portfolios newUser = Portfolios(
         id: id,
         mainInfo: {
           'info': _mainInfo,
@@ -115,7 +115,7 @@ class RegisterUserFormState extends State<RegisterUserForm> {
                 }
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  final users = await dbProvider.getUsers();
+                  final users = await dbProvider.getPortfolios();
                   late var id;
                   if (users.isEmpty) {
                     id = 1;
@@ -124,7 +124,7 @@ class RegisterUserFormState extends State<RegisterUserForm> {
                   }
                   final newUser = _saveForm(id);
                   if (dbProvider.isConnected) {
-                    await dbProvider.addUser(newUser!);
+                    await dbProvider.addPortfolio(newUser!);
                   }
                 }
               },

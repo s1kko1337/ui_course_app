@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course_project/db/db.dart';
 import 'package:flutter_course_project/models/messages_stat.dart';
-import 'package:flutter_course_project/models/users.dart';
+import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:flutter_course_project/models/works.dart';
 
 class DbProvider extends ChangeNotifier {
@@ -35,9 +35,9 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<User>> getUsers() async {
+  Future<List<Portfolios>> getPortfolios() async {
     if (_isConnected) {
-      return await _db.getUsers();
+      return await _db.getPortfolios();
     } else {
       _statusMessage = 'No connection available!';
       notifyListeners();
@@ -45,9 +45,9 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<User>> getUser(int id) async {
+  Future<List<Portfolios>> getPortfolio(int id) async {
     if (_isConnected) {
-      return await _db.getUser(id);
+      return await _db.getPortfolio(id);
     } else {
       _statusMessage = 'No connection available!';
       notifyListeners();
@@ -55,9 +55,9 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addUser(User user) async {
+  Future<void> addPortfolio(Portfolios user) async {
     if (_isConnected) {
-      await _db.addUser(user);
+      await _db.addPortfolio(user);
       notifyListeners();
     } else {
       _statusMessage = 'No connection available!';
@@ -65,9 +65,9 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateUser(User user) async {
+  Future<void> updatePortfolio(Portfolios user) async {
     if (_isConnected) {
-      await _db.updateUser(user);
+      await _db.updatePortfolio(user);
       notifyListeners();
     } else {
       _statusMessage = 'No connection available!';
@@ -75,9 +75,9 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteUser(int id) async {
+  Future<void> deletePortfolio(int id) async {
     if (_isConnected) {
-      await _db.deleteUser(id);
+      await _db.deletePortfolio(id);
       notifyListeners();
     } else {
       _statusMessage = 'No connection available!';

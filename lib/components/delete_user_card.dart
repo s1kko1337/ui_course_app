@@ -77,13 +77,13 @@ class DeleteUserCardState extends State<DeleteUserCard> {
                 }
                 if (_id != null && dbProvider.isConnected) {
                   _formKey.currentState!.save();
-                  final users = await dbProvider.getUsers();
-                  final curentUser = await dbProvider.getUser(_id!);
+                  final users = await dbProvider.getPortfolios();
+                  final curentUser = await dbProvider.getPortfolio(_id!);
                   if (users.isEmpty || curentUser.isEmpty) {
                     return;
                   } else if (_formKey.currentState!.validate()) {
                     final idU = _saveForm(_id!);
-                    await dbProvider.deleteUser(idU!);
+                    await dbProvider.deletePortfolio(idU!);
                     log('User w id: $_id updated');
                   }
                 }

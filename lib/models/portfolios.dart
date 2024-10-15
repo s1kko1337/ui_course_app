@@ -1,19 +1,18 @@
-class User {
+class Portfolios {
   final int id;
   final Map<String, dynamic> mainInfo;
   final Map<String, dynamic> additionalInfo;
   final MediaLinks mediaLinks;
 
-  User({
+  Portfolios({
     required this.id,
     required this.mainInfo,
     required this.additionalInfo,
     required this.mediaLinks,
   });
 
-  // Фабричный метод для создания экземпляра User из списка
-  factory User.fromList(List<dynamic> data) {
-    return User(
+  factory Portfolios.fromList(List<dynamic> data) {
+    return Portfolios(
       id: data[0],
       mainInfo: data[1],
       additionalInfo: data[2],
@@ -21,7 +20,6 @@ class User {
     );
   }
 
-  // Метод для преобразования экземпляра User в Map
   Map<String, dynamic> toJson() {
     return {
       'id': id,

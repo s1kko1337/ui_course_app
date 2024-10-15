@@ -3,9 +3,10 @@ import 'package:flutter_course_project/components/custom_card.dart';
 import 'package:flutter_course_project/colors/root_colors.dart';
 import 'package:flutter_course_project/components/default_text.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
-import 'package:flutter_course_project/models/users.dart';
+import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart'; // Импортируем url_launcher
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -49,6 +50,7 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var user_id = int.parse(dotenv.env['USER_ID']!);
     final colors = RootColors();
     final dbProvider = Provider.of<DbProvider>(context);
     return SafeArea(
@@ -58,8 +60,8 @@ class MainScreenState extends State<MainScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FutureBuilder<List<User>>(
-                future: dbProvider.getUser(1),
+              FutureBuilder<List<Portfolios>>(
+                future: dbProvider.getPortfolio(user_id),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
@@ -88,8 +90,8 @@ class MainScreenState extends State<MainScreen> {
               const SizedBox(
                 height: 25,
               ),
-              FutureBuilder<List<User>>(
-                future: dbProvider.getUser(1),
+              FutureBuilder<List<Portfolios>>(
+                future: dbProvider.getPortfolio(user_id),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();

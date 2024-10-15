@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_course_project/colors/root_colors.dart';
 import 'package:flutter_course_project/components/default_text.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
-import 'package:flutter_course_project/models/users.dart';
+import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:provider/provider.dart';
 
 class UserList extends StatelessWidget {
@@ -12,8 +12,8 @@ class UserList extends StatelessWidget {
   Widget build(BuildContext context) {
     final dbProvider = Provider.of<DbProvider>(context);
     RootColors colors = RootColors();
-    return FutureBuilder<List<User>>(
-      future: dbProvider.getUsers(),
+    return FutureBuilder<List<Portfolios>>(
+      future: dbProvider.getPortfolios(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

@@ -1,6 +1,6 @@
 import 'package:postgres/postgres.dart';
 import 'package:flutter_course_project/models/messages_stat.dart';
-import 'package:flutter_course_project/models/users.dart';
+import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:flutter_course_project/models/works.dart';
 import 'dart:developer';
 import 'dart:convert';
@@ -51,9 +51,9 @@ class DB {
     }
   }
 
-//Для Users
+//Для portfolios
 
-  Future<List<User>> getUser(int id) async {
+  Future<List<Portfolios>> getPortfolio(int id) async {
     if (!connection.isOpen) {
       log('Database connection is closed!');
       return [];
@@ -61,11 +61,11 @@ class DB {
 
     try {
       List<List<dynamic>> results = await connection.execute(
-        "SELECT * FROM public.users WHERE id = $id",
+        "SELECT * FROM public.portfolios WHERE id = $id",
       );
 
       return results.map((row) {
-        return User.fromList(row);
+        return Portfolios.fromList(row);
       }).toList();
     } catch (e) {
       log('Error during database query: $e');
@@ -73,7 +73,7 @@ class DB {
     }
   }
 
-  Future<List<User>> getUsers() async {
+  Future<List<Portfolios>> getPortfolios() async {
     if (!connection.isOpen) {
       log('Database connection is closed!');
       return [];
@@ -81,11 +81,11 @@ class DB {
 
     try {
       List<List<dynamic>> results = await connection.execute(
-        "SELECT * FROM public.users ORDER BY id ASC",
+        "SELECT * FROM public.portfolios ORDER BY id ASC",
       );
 
       return results.map((row) {
-        return User.fromList(row);
+        return Portfolios.fromList(row);
       }).toList();
     } catch (e) {
       log('Error during database query: $e');
@@ -93,7 +93,7 @@ class DB {
     }
   }
 
-  Future<void> addUser(User user) async {
+  Future<void> addPortfolio(Portfolios user) async {
     if (!connection.isOpen) {
       log('Database connection is closed!');
       return;
@@ -104,14 +104,14 @@ class DB {
     final mediaLinks = jsonEncode(user.mediaLinks.toJson());
     try {
       await connection.execute(
-          "INSERT INTO public.users (id, main_info, additional_info, media_links) VALUES ('$id', '$mainInfo', '$additionalInfo', '$mediaLinks')");
+          "INSERT INTO public.portfolios (id, main_info, additional_info, media_links) VALUES ('$id', '$mainInfo', '$additionalInfo', '$mediaLinks')");
       log('User added successfully');
     } catch (e) {
-      log('Error adding user: $e');
+      log('Error adding portfolios: $e');
     }
   }
 
-  Future<void> updateUser(User user) async {
+  Future<void> updatePortfolio(Portfolios user) async {
     if (!connection.isOpen) {
       log('Database connection is closed!');
       return;
@@ -124,7 +124,7 @@ class DB {
 
     try {
       await connection.execute(
-        "UPDATE public.users SET main_info = '$mainInfo', additional_info = '$additionalInfo', media_links = '$mediaLinks' WHERE id = $id",
+        "UPDATE public.portfolios SET main_info = '$mainInfo', additional_info = '$additionalInfo', media_links = '$mediaLinks' WHERE id = $id",
       );
       log('User updated successfully');
     } catch (e) {
@@ -132,7 +132,7 @@ class DB {
     }
   }
 
-  Future<void> deleteUser(int id) async {
+  Future<void> deletePortfolio(int id) async {
     if (!connection.isOpen) {
       log('Database connection is closed!');
       return;
@@ -140,7 +140,7 @@ class DB {
 
     try {
       await connection.execute(
-        "DELETE FROM public.users WHERE id = '$id'",
+        "DELETE FROM public.portfolios WHERE id = '$id'",
       );
       log('User deleted successfully');
     } catch (e) {

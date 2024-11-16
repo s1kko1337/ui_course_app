@@ -139,6 +139,36 @@ class DB {
     }
   }
 
+  Future<List<MessageStat>> getAllMesages() async {
+    if (!connection.isOpen) {
+      log('Database connection is closed!');
+      return [];
+    }
+
+    try {
+      List<List<dynamic>> results = await connection.execute(
+        "SELECT * FROM public.messages_stat ORDER BY id ASC",
+      );
+
+      return results.map((row) {
+        return MessageStat.fromMap({
+          'id': row[0],
+          'created_at': row[1].toString(),
+          'id_user': row[2],
+          'updated_at': row[3].toString(),
+          'chat_id':
+              row[4], // предполагается, что chat_id находится в этом индексе
+          'chat_status': row[5],
+          'message_text': row[6],
+          'chat_article': row[7],
+          'is_admin': false, // всегда false
+        });
+      }).toList();
+    } catch (e) {
+      log('Error during database query: $e');
+      return [];
+    }
+  }
   Future<List<MessageStat>> getMessagesStat(String chatId) async {
     if (!connection.isOpen) {
       log('Database connection is closed!');

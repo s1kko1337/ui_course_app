@@ -75,6 +75,15 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
+  Future<List<MessageStat>> getGlobalMessagesStat() async {
+    if (_isConnected) {
+      return await _db.getAllMesages();
+    } else {
+      _statusMessage = 'No connection available!';
+      notifyListeners();
+      return [];
+    }
+  }
   Future<void> addMessageStat(MessageStat messageStat) async {
     if (_isConnected) {
       await _db.addMessageStat(messageStat);

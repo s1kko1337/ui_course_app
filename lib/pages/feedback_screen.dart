@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_course_project/app_data_loader.dart';
 import 'package:flutter_course_project/components/messages.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
 import 'package:flutter_course_project/models/messages_stat.dart';
-import 'package:flutter_course_project/components/messages.dart'; // Импортируйте ваш виджет сообщений
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:provider/provider.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -15,10 +14,9 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
-  final appData = AppDataManager();
+  final AppDataManager appData = AppDataManager();
   final TextEditingController _messageController = TextEditingController();
   final TextEditingController _chatNameController = TextEditingController();
-  bool _isConnected = false;
   bool _isLoading = true;
 
   @override
@@ -33,12 +31,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     if (!dbProvider.isConnected) {
       await dbProvider.connect();
     }
-    setState(() {
-      _isConnected = dbProvider.isConnected;
-    });
+    setState(() {});
   }
 
-  void _initializeData() async {
+  Future<void> _initializeData() async {
     await appData.readData();
     setState(() {
       _isLoading = false;
@@ -55,20 +51,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Обратная связь'),
-        ),
-        body: Center(
+      return const SafeArea(
+        child: Center(
           child: CircularProgressIndicator(),
         ),
       );
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Обратная связь'),
-      ),
-      body: appData.isChatCreated ? _buildChatView() : _buildNoChatView(),
+    return SafeArea(
+      child: appData.isChatCreated ? _buildChatView() : _buildNoChatView(),
     );
   }
 
@@ -76,43 +66,39 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Text('ID чата: ${appData.chatId ?? 'Не найден'}'),
         ),
-        Expanded(
-          child: _buildMessagesList(),
+        const Expanded(
+          child: MessagesList(),
         ),
         _buildMessageInput(),
         Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
             onPressed: _resetChat,
-            child: Text('Сбросить чат'),
+            child: const Text('Сбросить чат'),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildMessagesList() {
-    return MessagesList(appData.chatId as String);
-  }
-
   Widget _buildMessageInput() {
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _messageController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Введите сообщение',
               ),
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send),
+            icon: const Icon(Icons.send),
             onPressed: () {
               _sendMessage(_messageController.text);
               _messageController.clear();
@@ -123,20 +109,20 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     );
   }
 
-  void _sendMessage(String message) async {
+  Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
-    List<MessageStat> msg =
-        await Provider.of<DbProvider>(context, listen: false)
-            .getMessagesStat(appData.chatId as String);
-    int newMessageId = msg.last.id + 1;
-    await Provider.of<DbProvider>(context, listen: false).addMessageStat(
+    final dbProvider = Provider.of<DbProvider>(context, listen: false);
+    List<MessageStat> messages =
+        await dbProvider.getMessagesStat(appData.chatId!);
+    int newMessageId = messages.isNotEmpty ? messages.last.id + 1 : 1;
+    await dbProvider.addMessageStat(
       MessageStat(
         id: newMessageId,
         createdAt: DateTime.now(),
         idUser: int.parse(dotenv.env['USER_ID']!),
         updatedAt: DateTime.now(),
-        chatId: int.parse(appData.chatId as String),
-        chatStatus: 'active', // Или ваш статус по умолчанию
+        chatId: int.parse(appData.chatId!),
+        chatStatus: 'active',
         messageText: message,
         chatArticle: null,
         isAdmin: false,
@@ -148,22 +134,22 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget _buildNoChatView() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0), // Добавлено для удобства
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Введите название чата:'),
-            SizedBox(height: 8.0),
+            const Text('Введите название чата:'),
+            const SizedBox(height: 8.0),
             TextField(
               controller: _chatNameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Название чата',
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _createChat,
-              child: Text('Создать чат'),
+              child: const Text('Создать чат'),
             ),
           ],
         ),
@@ -171,17 +157,34 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     );
   }
 
-  void _createChat() async {
+  Future<void> _createChat() async {
     String chatName = _chatNameController.text.trim();
     if (chatName.isEmpty) {
+      // Дополнительно: показать предупреждение о необходимости ввода названия
       return;
     }
-    String newChatId = '${DateTime.now().millisecondsSinceEpoch}';
+    final dbProvider = Provider.of<DbProvider>(context, listen: false);
+    List<MessageStat> messages = await dbProvider.getGlobalMessagesStat();
+    int newMessageId = messages.isNotEmpty ? messages.last.id + 1 : 1;
+    String newChatId = DateTime.now().millisecondsSinceEpoch.toString();
+    await dbProvider.addMessageStat(
+      MessageStat(
+        id: newMessageId,
+        createdAt: DateTime.now(),
+        idUser: int.parse(dotenv.env['USER_ID']!),
+        updatedAt: DateTime.now(),
+        chatId: int.parse(newChatId),
+        chatStatus: 'active',
+        messageText: 'nullablefirstmessageforopenchat',
+        chatArticle: chatName,
+        isAdmin: false,
+      ),
+    );
     appData.createChat(newChatId, chatName);
     setState(() {});
   }
 
-  void _resetChat() async {
+  Future<void> _resetChat() async {
     appData.resetChat();
     setState(() {});
   }

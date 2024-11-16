@@ -62,9 +62,9 @@ class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                 ),
                 child: TabBarView(
                   controller: tabController,
-                  children: <Widget>[
-                    const MainScreen(),
-                    const ModelsScreen(),
+                  children: const <Widget>[
+                    MainScreen(),
+                    ModelsScreen(),
                     FeedbackScreen(),
                   ],
                 ),

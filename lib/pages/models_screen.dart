@@ -14,22 +14,6 @@ class ModelsScreen extends StatelessWidget {
         'description':
             'Модель астронавта, разработанная пользователем тест тест тест тест тест тест тест тест'
       },
-      {
-        'src': 'https://modelviewer.dev/shared-assets/models/Horse.glb',
-        'description':
-            'Модель лошади тест тест тест тест тест тест тест тест тест тест тест тест тест тест'
-      },
-      {
-        'src':
-            'https://modelviewer.dev/shared-assets/models/reflective-sphere.gltf',
-        'description':
-            'Модель шара тест тест тест тест тест тест тест тест тест тест тест тест тест тест'
-      },
-      {
-        'src': 'assets/3dmodels/drone.glb',
-        'description':
-            'Модель дрона в разрезе тест тест тест тест тест тест тест тест тест тест тест тест'
-      },
     ];
 
     return Padding(

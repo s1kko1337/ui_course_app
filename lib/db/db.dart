@@ -1,14 +1,16 @@
+import 'dart:ffi';
+
 import 'package:postgres/postgres.dart';
 import 'package:flutter_course_project/models/messages_stat.dart';
 import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:flutter_course_project/models/works.dart';
 import 'dart:developer';
 import 'dart:convert';
+import 'dart:core';
 // import 'dart:io' show Platform;
 // import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-//TODO Шаблонизировать функции для запросов к базе, чтобы они работали в зависимости от типа принятого объекта
 class DB {
   late var connection;
   Future<void> connect() async {
@@ -93,63 +95,6 @@ class DB {
     }
   }
 
-  Future<void> addPortfolio(Portfolios user) async {
-    if (!connection.isOpen) {
-      log('Database connection is closed!');
-      return;
-    }
-    final id = user.id;
-    final mainInfo = jsonEncode(user.mainInfo);
-    final additionalInfo = jsonEncode(user.additionalInfo);
-    final mediaLinks = jsonEncode(user.mediaLinks.toJson());
-    try {
-      await connection.execute(
-          "INSERT INTO public.portfolios (id, main_info, additional_info, media_links) VALUES ('$id', '$mainInfo', '$additionalInfo', '$mediaLinks')");
-      log('User added successfully');
-    } catch (e) {
-      log('Error adding portfolios: $e');
-    }
-  }
-
-  Future<void> updatePortfolio(Portfolios user) async {
-    if (!connection.isOpen) {
-      log('Database connection is closed!');
-      return;
-    }
-
-    final id = user.id;
-    final mainInfo = jsonEncode(user.mainInfo);
-    final additionalInfo = jsonEncode(user.additionalInfo);
-    final mediaLinks = jsonEncode(user.mediaLinks.toJson());
-
-    try {
-      await connection.execute(
-        "UPDATE public.portfolios SET main_info = '$mainInfo', additional_info = '$additionalInfo', media_links = '$mediaLinks' WHERE id = $id",
-      );
-      log('User updated successfully');
-    } catch (e) {
-      log('Error updating user: $e');
-    }
-  }
-
-  Future<void> deletePortfolio(int id) async {
-    if (!connection.isOpen) {
-      log('Database connection is closed!');
-      return;
-    }
-
-    try {
-      await connection.execute(
-        "DELETE FROM public.portfolios WHERE id = '$id'",
-      );
-      log('User deleted successfully');
-    } catch (e) {
-      log('Error deleting user: $e');
-    }
-  }
-
-//Для Works
-
   Future<List<Work>> getWorks() async {
     if (!connection.isOpen) {
       log('Database connection is closed!');
@@ -175,63 +120,26 @@ class DB {
     }
   }
 
-  Future<void> addWork(Work work) async {
+//Для Messages_stat
+  Future<int?> getLastChatId() async {
     if (!connection.isOpen) {
       log('Database connection is closed!');
-      return;
-    }
-    final id = work.id;
-    final modelerId = work.modelerId;
-    final pathToModel = work.pathToModel;
-    final additionalInfo = jsonEncode(work.additionalInfo);
-    try {
-      await connection.execute(
-        "INSERT INTO public.works (id, modeler_id, path_to_model, additional_info) VALUES ('$id', '$modelerId', '$pathToModel', '$additionalInfo')",
-      );
-      log('Work added successfully');
-    } catch (e) {
-      log('Error adding work: $e');
-    }
-  }
-
-  Future<void> updateWork(Work work) async {
-    if (!connection.isOpen) {
-      log('Database connection is closed!');
-      return;
-    }
-    final id = work.id;
-    final modelerId = work.modelerId;
-    final pathToModel = work.pathToModel;
-    final additionalInfo = jsonEncode(work.additionalInfo);
-    try {
-      await connection.execute(
-        "UPDATE public.works SET modeler_id = '$modelerId', path_to_model = '$pathToModel', additional_info = '$additionalInfo' WHERE id = '$id'",
-      );
-      log('Work updated successfully');
-    } catch (e) {
-      log('Error updating work: $e');
-    }
-  }
-
-  Future<void> deleteWork(String id) async {
-    if (!connection.isOpen) {
-      log('Database connection is closed!');
-      return;
+      return null;
     }
 
     try {
-      await connection.execute(
-        "DELETE FROM public.works WHERE id = '$id'",
+      int result = await connection.execute(
+        "SELECT MAX(chat_id) AS max_chat_id FROM public.messages_stat",
       );
-      log('Work deleted successfully');
+      //log('Error deleting work: $result');
+      return result;
     } catch (e) {
       log('Error deleting work: $e');
+      return null;
     }
   }
 
-//Для Messages_stat
-
-  Future<List<MessageStat>> getMessagesStat() async {
+  Future<List<MessageStat>> getMessagesStat(String chatId) async {
     if (!connection.isOpen) {
       log('Database connection is closed!');
       return [];
@@ -239,15 +147,21 @@ class DB {
 
     try {
       List<List<dynamic>> results = await connection.execute(
-        "SELECT * FROM public.messages_stat",
+        "SELECT * FROM public.messages_stat WHERE chat_id = '$chatId' ORDER BY id ASC",
       );
 
       return results.map((row) {
         return MessageStat.fromMap({
           'id': row[0],
-          'message_body': jsonEncode(row[1]),
-          'email': row[2],
-          'created_at': row[3].toString(),
+          'created_at': row[1].toString(),
+          'id_user': row[2],
+          'updated_at': row[3].toString(),
+          'chat_id':
+              row[4], // предполагается, что chat_id находится в этом индексе
+          'chat_status': row[5],
+          'message_text': row[6],
+          'chat_article': row[7],
+          'is_admin': false, // всегда false
         });
       }).toList();
     } catch (e) {
@@ -261,52 +175,16 @@ class DB {
       log('Database connection is closed!');
       return;
     }
-    final id = messageStat.id;
-    final messageBody = jsonEncode(messageStat.messageBody);
-    final email = messageStat.email;
-    final createdAt = messageStat.createdAt.toIso8601String();
+
     try {
       await connection.execute(
-        "INSERT INTO public.messages_stat (id, message_body, email, created_at) VALUES ('$id', '$messageBody', '$email', '$createdAt')",
+        "INSERT INTO public.messages_stat (id, created_at, id_user, updated_at, chat_id, chat_status, message_text, chat_article, is_admin) VALUES "
+        "('${messageStat.id}', '${messageStat.createdAt.toIso8601String()}', '${messageStat.idUser}', '${messageStat.updatedAt.toIso8601String()}', "
+        "'${messageStat.chatId}', '${messageStat.chatStatus}', '${messageStat.messageText}', '${messageStat.chatArticle}', false)",
       );
       log('MessageStat added successfully');
     } catch (e) {
       log('Error adding MessageStat: $e');
-    }
-  }
-
-  Future<void> updateMessageStat(MessageStat messageStat) async {
-    if (!connection.isOpen) {
-      log('Database connection is closed!');
-      return;
-    }
-    final id = messageStat.id;
-    final messageBody = jsonEncode(messageStat.messageBody);
-    final email = messageStat.email;
-    final createdAt = messageStat.createdAt.toIso8601String();
-    try {
-      await connection.execute(
-        "UPDATE public.messages_stat SET message_body = '$messageBody', email = '$email', created_at = '$createdAt' WHERE id = '$id'",
-      );
-      log('MessageStat updated successfully');
-    } catch (e) {
-      log('Error updating MessageStat: $e');
-    }
-  }
-
-  Future<void> deleteMessageStat(String id) async {
-    if (!connection.isOpen) {
-      log('Database connection is closed!');
-      return;
-    }
-
-    try {
-      await connection.execute(
-        "DELETE FROM public.messages_stat WHERE id = $id",
-      );
-      log('MessageStat deleted successfully');
-    } catch (e) {
-      log('Error deleting MessageStat: $e');
     }
   }
 

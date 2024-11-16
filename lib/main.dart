@@ -3,12 +3,15 @@ import 'package:flutter_course_project/components/my_app_bar.dart';
 import 'package:flutter_course_project/pages/feedback_screen.dart';
 import 'package:flutter_course_project/pages/main_screen.dart';
 import 'package:flutter_course_project/pages/models_screen.dart';
-import 'package:flutter_course_project/pages/simple_admin_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
-import 'package:flutter_course_project/pages/db_test_screen.dart';
+import 'package:flutter_course_project/app_data_loader.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await AppDataManager().readData();
+
   runApp(const MyApp());
 }
 
@@ -25,7 +28,7 @@ class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 5, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
     tabController.addListener(() {
       setState(() {});
     });
@@ -59,12 +62,10 @@ class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                 ),
                 child: TabBarView(
                   controller: tabController,
-                  children: const <Widget>[
-                    MainScreen(),
-                    ModelsScreen(),
+                  children: <Widget>[
+                    const MainScreen(),
+                    const ModelsScreen(),
                     FeedbackScreen(),
-                    DbTestScreen(),
-                    SimpleAdminPage(),
                   ],
                 ),
               ),

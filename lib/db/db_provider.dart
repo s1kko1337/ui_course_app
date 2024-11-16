@@ -55,36 +55,6 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addPortfolio(Portfolios user) async {
-    if (_isConnected) {
-      await _db.addPortfolio(user);
-      notifyListeners();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
-  Future<void> updatePortfolio(Portfolios user) async {
-    if (_isConnected) {
-      await _db.updatePortfolio(user);
-      notifyListeners();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
-  Future<void> deletePortfolio(int id) async {
-    if (_isConnected) {
-      await _db.deletePortfolio(id);
-      notifyListeners();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
   Future<List<Work>> getWorks() async {
     if (_isConnected) {
       return await _db.getWorks();
@@ -95,39 +65,9 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addWork(Work work) async {
+  Future<List<MessageStat>> getMessagesStat(String chatId) async {
     if (_isConnected) {
-      await _db.addWork(work);
-      notifyListeners();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateWork(Work work) async {
-    if (_isConnected) {
-      await _db.updateWork(work);
-      notifyListeners();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteWork(String id) async {
-    if (_isConnected) {
-      await _db.deleteWork(id);
-      notifyListeners();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
-  Future<List<MessageStat>> getMessagesStat() async {
-    if (_isConnected) {
-      return await _db.getMessagesStat();
+      return await _db.getMessagesStat(chatId);
     } else {
       _statusMessage = 'No connection available!';
       notifyListeners();
@@ -138,26 +78,6 @@ class DbProvider extends ChangeNotifier {
   Future<void> addMessageStat(MessageStat messageStat) async {
     if (_isConnected) {
       await _db.addMessageStat(messageStat);
-      notifyListeners();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateMessageStat(MessageStat messageStat) async {
-    if (_isConnected) {
-      await _db.updateMessageStat(messageStat);
-      notifyListeners();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteMessageStat(String id) async {
-    if (_isConnected) {
-      await _db.deleteMessageStat(id);
       notifyListeners();
     } else {
       _statusMessage = 'No connection available!';

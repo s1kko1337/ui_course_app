@@ -49,22 +49,6 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
                     : colors.IconNonActiveCol,
               ),
             ),
-            Tab(
-              icon: Icon(
-                Icons.bug_report_outlined,
-                color: tabController.index == 3
-                    ? colors.IconActiveCol
-                    : colors.IconNonActiveCol,
-              ),
-            ),
-            Tab(
-              icon: Icon(
-                Icons.admin_panel_settings,
-                color: tabController.index == 4
-                    ? colors.IconActiveCol
-                    : colors.IconNonActiveCol,
-              ),
-            ),
           ],
         ),
       ),

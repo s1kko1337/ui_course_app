@@ -16,10 +16,10 @@ class Work {
   // Фабричный метод для создания объекта Work из Map
   factory Work.fromMap(Map<String, dynamic> map) {
     return Work(
-      id: map['id'],
-      modelerId: map['modeler_id'],
-      pathToModel: map['path_to_model'],
-      additionalInfo: jsonDecode(map['additional_info']),
+      id: map['id'] as int,
+      modelerId: map['modeler_id'] as int,
+      pathToModel: map['path_to_model'] as String,
+      additionalInfo: _decodeAdditionalInfo(map['additional_info']),
     );
   }
 
@@ -29,7 +29,28 @@ class Work {
       'id': id,
       'modeler_id': modelerId,
       'path_to_model': pathToModel,
-      'additional_info': jsonEncode(additionalInfo),
+      'additional_info': _encodeAdditionalInfo(additionalInfo),
     };
+  }
+
+  // Приватный метод для декодирования additional_info
+  static Map<String, dynamic> _decodeAdditionalInfo(dynamic jsonData) {
+    if (jsonData == null || jsonData is! String) {
+      return {};  // Возвращаем пустую карту, если данных нет
+    }
+    try {
+      return jsonDecode(jsonData) as Map<String, dynamic>;
+    } catch (e) {
+      return {};  // В случае ошибки возвращаем пустую карту
+    }
+  }
+
+  // Приватный метод для кодирования additional_info
+  static String _encodeAdditionalInfo(Map<String, dynamic> data) {
+    try {
+      return jsonEncode(data);
+    } catch (e) {
+      return '{}';  // Возвращаем пустой объект, если произошла ошибка при кодировании
+    }
   }
 }

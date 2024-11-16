@@ -17,8 +17,7 @@ class FeedbackScreen extends StatefulWidget {
 class _FeedbackScreenState extends State<FeedbackScreen> {
   final appData = AppDataManager();
   final TextEditingController _messageController = TextEditingController();
-  final TextEditingController _chatNameController =
-      TextEditingController(); // Новый контроллер
+  final TextEditingController _chatNameController = TextEditingController();
   bool _isConnected = false;
   bool _isLoading = true;
 
@@ -49,7 +48,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   void dispose() {
     _messageController.dispose();
-    _chatNameController.dispose(); // Не забудьте освободить ресурсы
+    _chatNameController.dispose();
     super.dispose();
   }
 
@@ -149,7 +148,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget _buildNoChatView() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(16.0), // Добавлено для эстетики
+        padding: EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -175,11 +174,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   void _createChat() async {
     String chatName = _chatNameController.text.trim();
     if (chatName.isEmpty) {
-      // Опционально: показать предупреждение о необходимости ввода названия
       return;
     }
     String newChatId = '${DateTime.now().millisecondsSinceEpoch}';
-    appData.createChat(newChatId, chatName); // Передаём название чата
+    appData.createChat(newChatId, chatName);
     setState(() {});
   }
 

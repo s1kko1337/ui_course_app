@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_course_project/app_data_loader.dart';
 import 'package:flutter_course_project/components/default_text.dart';
 import 'package:flutter_course_project/components/gray_text.dart';
 import 'package:flutter_course_project/components/orange_button_style.dart';
@@ -17,6 +18,7 @@ class DbTestScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = RootColors();
     final dbProvider = Provider.of<DbProvider>(context);
+    final AppDataManager appData = AppDataManager();
 
     return Center(
       child: CustomCard(
@@ -42,8 +44,14 @@ class DbTestScreen extends StatelessWidget {
               },
               child: const GrayText(text: 'Тестовый запрос к базе'),
             ),
-          
-            
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ButtonStyles.elevatedButtonStyle(colors),
+              onPressed: () async {
+                appData.resetModels();
+              },
+              child: const GrayText(text: 'Тестовый запрос к базе'),
+            ),
           ],
         ),
       ),

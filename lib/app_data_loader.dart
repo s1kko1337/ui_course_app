@@ -111,6 +111,7 @@ class AppDataManager {
       user: dotenv.env['FTP_USERNAME']!,
       pass: dotenv.env['FTP_PASSWORD']!,
       securityType: SecurityType.FTPES,
+
       showLog: true,
     );
 
@@ -174,7 +175,6 @@ class AppDataManager {
       await _ftpConnect.disconnect();
       log('Отключение от FTP-сервера.');
 
-      // Обновляем список загруженных моделей и сохраняем данные
       loadedModels = downloadedModels;
       await writeData();
       log('Список загруженных моделей обновлен и сохранен.');
@@ -188,6 +188,34 @@ class AppDataManager {
     chatName = null;
     isChatCreated = false;
     writeData();
+  }
+
+  Future<void> resetModels() async {
+    // Получаем путь к локальной директории
+    final directory = await getApplicationDocumentsDirectory();
+    String localPath = directory.path;
+
+    // Удаляем файлы моделей из локальной директории
+    for (String fileName in loadedModels) {
+      String filePath = '$localPath/$fileName';
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        try {
+          await file.delete();
+          log('Файл $fileName удален.');
+        } catch (e) {
+          log('Ошибка при удалении файла $fileName: $e');
+        }
+      } else {
+        log('Файл $fileName не найден.');
+      }
+    }
+
+    // Очищаем список загруженных моделей и сохраняем данные
+    loadedModels = [];
+    await writeData();
+    log('Список загруженных моделей очищен и данные сохранены.');
   }
 
   void saveChatData(String chatId, String chatName, param2) {

@@ -11,6 +11,7 @@ class DbProvider extends ChangeNotifier {
 
   bool get isConnected => _isConnected;
   String get statusMessage => _statusMessage;
+  
 
   Future<void> connect() async {
     try {

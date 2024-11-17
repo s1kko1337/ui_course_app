@@ -1,20 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course_project/components/custom_card.dart';
+import 'package:flutter_course_project/app_data_loader.dart';
 import 'package:flutter_course_project/components/model_card.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:flutter_course_project/app_data_loader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
-class ModelsScreen extends StatelessWidget {
+class ModelsScreen extends StatefulWidget {
   const ModelsScreen({super.key});
 
   @override
+  _ModelsScreenState createState() => _ModelsScreenState();
+}
+
+class _ModelsScreenState extends State<ModelsScreen> {
+  List<Map<String, String>> models = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadModels();
+  }
+
+  Future<void> loadModels() async {
+    final appDataManager = AppDataManager();
+
+    await appDataManager.readData();
+
+    if (appDataManager.loadedModels.isEmpty) {
+      await appDataManager.getModels();
+    }
+
+    // Получаем список загруженных моделей
+    List<String> loadedModelFiles = appDataManager.loadedModels;
+
+    // Получаем путь к локальной директории
+    final directory = await getApplicationDocumentsDirectory();
+    String localPath = directory.path;
+
+    // Формируем список моделей для отображения
+    List<Map<String, String>> loadedModelsList = [];
+
+    for (String fileName in loadedModelFiles) {
+      String filePath = '$localPath/$fileName';
+      if (File(filePath).existsSync()) {
+        loadedModelsList.add({
+          'src': filePath,
+          'description': 'Загруженная модель: $fileName',
+        });
+      }
+    }
+    setState(() {
+      models = loadedModelsList;
+      isLoading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> models = [
-      {
-        'src': 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
-        'description':
-            'Модель астронавта, разработанная пользователем тест тест тест тест тест тест тест тест'
-      },
-    ];
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (models.isEmpty) {
+      return const Center(
+        child: Text('Нет доступных моделей для отображения'),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.all(16.0),

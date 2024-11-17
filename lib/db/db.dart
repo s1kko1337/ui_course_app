@@ -34,25 +34,6 @@ class DB {
     log(connection.toString());
   }
 
-  Future<void> testGET() async {
-    if (!connection.isOpen) {
-      log('Database connection is closed!');
-      return;
-    }
-
-    try {
-      List<List<dynamic>> results = await connection.execute(
-        "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
-      );
-
-      for (final row in results) {
-        log('Table: ${row[0]}');
-      }
-    } catch (e) {
-      log('Error during database query: $e');
-    }
-  }
-
 //Для portfolios
 
   Future<List<Portfolios>> getPortfolio(int id) async {
@@ -107,12 +88,19 @@ class DB {
       );
 
       return results.map((row) {
-        return Work.fromMap({
+        log('Transforming row: $row');
+
+        Work work = Work.fromMap({
           'id': row[0],
           'modeler_id': row[1],
           'path_to_model': row[2],
-          'additional_info': jsonEncode(row[3]),
+          'additional_info': row[3],
         });
+
+        // Логируем созданный объект Work
+        log('Created Work object: $work');
+
+        return work;
       }).toList();
     } catch (e) {
       log('Error during database query: $e');
@@ -131,7 +119,6 @@ class DB {
       int result = await connection.execute(
         "SELECT MAX(chat_id) AS max_chat_id FROM public.messages_stat",
       );
-      //log('Error deleting work: $result');
       return result;
     } catch (e) {
       log('Error deleting work: $e');
@@ -156,8 +143,7 @@ class DB {
           'created_at': row[1].toString(),
           'id_user': row[2],
           'updated_at': row[3].toString(),
-          'chat_id':
-              row[4], // предполагается, что chat_id находится в этом индексе
+          'chat_id': row[4],
           'chat_status': row[5],
           'message_text': row[6],
           'chat_article': row[7],
@@ -169,6 +155,7 @@ class DB {
       return [];
     }
   }
+
   Future<List<MessageStat>> getMessagesStat(String chatId) async {
     if (!connection.isOpen) {
       log('Database connection is closed!');

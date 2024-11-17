@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course_project/colors/root_colors.dart';
+import 'package:flutter_course_project/components/custom_card.dart';
+import 'package:flutter_course_project/components/default_text.dart';
+import 'package:flutter_course_project/components/orange_button_style.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_course_project/app_data_loader.dart';
@@ -14,6 +18,7 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
+  final colors = RootColors();
   final AppDataManager appData = AppDataManager();
   final TextEditingController _messageController = TextEditingController();
   final TextEditingController _chatNameController = TextEditingController();
@@ -133,34 +138,82 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   Widget _buildNoChatView() {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0), // Добавлено для удобства
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Введите название чата:'),
-            const SizedBox(height: 8.0),
-            TextField(
-              controller: _chatNameController,
-              decoration: const InputDecoration(
-                hintText: 'Название чата',
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _createChat,
-              child: const Text('Создать чат'),
-            ),
-          ],
+      children: [
+        const SizedBox(
+          height: 150,
         ),
-      ),
-    );
+        CustomCard(
+          height: 200,
+          width: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                'Для обратной связи напишите создайте чат.',
+                style: TextStyle(
+                  color: colors.TextCol,
+                  fontSize: 48,
+                ),
+              ),
+            ]),
+          ),
+        ),
+        const SizedBox(
+          height: 150,
+        ),
+        CustomCard(
+          height: 300,
+          width: 450,
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Для обратной связи напишите создайте чат.',
+                  style: TextStyle(
+                    color: colors.TextCol,
+                    fontSize: 30,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                TextField(
+                  controller: _chatNameController,
+                  decoration: InputDecoration(
+                    hintText: 'Введите тему обращения',
+                    hintStyle: TextStyle(
+                      color: colors.TextCol,
+                      fontSize: 20,
+                    ),
+                    border:
+                        const OutlineInputBorder(), // Добавляет рамку вокруг TextField
+                    filled: true, // Заполняет фон
+                    fillColor: colors.ColorBgSoftCol, // Цвет фона
+                  ),
+                  style: TextStyle(
+                    color: colors.TextCol,
+                    fontSize: 24,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  style: ButtonStyles.elevatedButtonStyle(colors),
+                  onPressed: _createChat,
+                  child: const Text('Создать чат'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ));
   }
 
   Future<void> _createChat() async {
     String chatName = _chatNameController.text.trim();
     if (chatName.isEmpty) {
-      // Дополнительно: показать предупреждение о необходимости ввода названия
       return;
     }
     final dbProvider = Provider.of<DbProvider>(context, listen: false);

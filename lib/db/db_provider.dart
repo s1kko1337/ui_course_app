@@ -26,15 +26,6 @@ class DbProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> testQuery() async {
-    if (_isConnected) {
-      await _db.testGET();
-    } else {
-      _statusMessage = 'No connection available!';
-      notifyListeners();
-    }
-  }
-
   Future<List<Portfolios>> getPortfolios() async {
     if (_isConnected) {
       return await _db.getPortfolios();

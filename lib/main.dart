@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course_project/components/my_app_bar.dart';
+import 'package:flutter_course_project/pages/db_test_screen.dart';
 import 'package:flutter_course_project/pages/feedback_screen.dart';
 import 'package:flutter_course_project/pages/main_screen.dart';
 import 'package:flutter_course_project/pages/models_screen.dart';
@@ -28,7 +29,7 @@ class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length:4 , vsync: this);
     tabController.addListener(() {
       setState(() {});
     });
@@ -66,6 +67,7 @@ class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                     MainScreen(),
                     ModelsScreen(),
                     FeedbackScreen(),
+                    DbTestScreen(),
                   ],
                 ),
               ),

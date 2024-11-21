@@ -76,6 +76,18 @@ class DbProvider extends ChangeNotifier {
       return [];
     }
   }
+
+  Future<List<List<dynamic>>> getChatList() async {
+    if (_isConnected) {
+      return await _db.getChatList();
+    } else {
+      _statusMessage = 'No connection available!';
+      notifyListeners();
+      return [];
+    }
+  }
+
+
   Future<void> addMessageStat(MessageStat messageStat) async {
     if (_isConnected) {
       await _db.addMessageStat(messageStat);

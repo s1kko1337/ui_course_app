@@ -7,6 +7,7 @@ import 'package:ftpconnect/ftpconnect.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
 import 'package:flutter_course_project/db/db.dart';
+//import 'package:pure_ftp/pure_ftp.dart';
 
 class AppDataManager {
   static final AppDataManager _instance = AppDataManager._internal();
@@ -20,6 +21,7 @@ class AppDataManager {
   String? chatId;
   String? chatName;
   List<String> loadedModels = [];
+  List<Map<String, String>> chatList = [];
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -43,6 +45,15 @@ class AppDataManager {
         chatId = jsonData['chatId'] as String?;
         chatName = jsonData['chatName'] as String?;
         loadedModels = List<String>.from(jsonData['loadedModels'] ?? []);
+
+        // Load chatList
+        if (jsonData['chatList'] != null) {
+          chatList = List<Map<String, String>>.from(
+            jsonData['chatList'].map((chat) => Map<String, String>.from(chat)),
+          );
+        } else {
+          chatList = [];
+        }
       } else {
         await writeData();
       }
@@ -59,6 +70,7 @@ class AppDataManager {
       'chatId': chatId,
       'chatName': chatName,
       'loadedModels': loadedModels,
+      'chatList': chatList,
     };
 
     String jsonString = jsonEncode(jsonData);
@@ -73,37 +85,40 @@ class AppDataManager {
     return null;
   }
 
-  Future<void> createChat(String chatId, String chatName) async {
-    try {
-      final allMessages = await DbProvider().getGlobalMessagesStat();
+Future<void> createChat(String chatId, String chatName) async {
+  try {
+    final allMessages = await DbProvider().getGlobalMessagesStat();
 
-      int? chatIdInt = int.tryParse(chatId);
+    int? chatIdInt = int.tryParse(chatId);
 
-      if (chatIdInt == null) {
-        log('Ошибка: chatId "$chatId" не является корректным числом.');
-        return;
-      }
-
-      MessageStat? messageWithChatId = firstWhereOrNull(
-        allMessages,
-        (message) => message.chatId == chatIdInt,
-      );
-
-      if (messageWithChatId != null && messageWithChatId.chatArticle != null) {
-        this.chatName = messageWithChatId.chatArticle!;
-      } else {
-        this.chatName = chatName;
-      }
-
-      // Устанавливаем значения свойств
-      this.chatId = chatId;
-      this.isChatCreated = true;
-
-      saveChatData(this.chatId!, this.chatName!, null);
-    } catch (e) {
-      print('Ошибка в createChat: $e');
+    if (chatIdInt == null) {
+      log('Ошибка: chatId "$chatId" не является корректным числом.');
+      return;
     }
+
+    MessageStat? messageWithChatId = firstWhereOrNull(
+      allMessages,
+      (message) => message.chatId == chatIdInt,
+    );
+
+    if (messageWithChatId != null && messageWithChatId.chatArticle != null) {
+      this.chatName = messageWithChatId.chatArticle!;
+    } else {
+      this.chatName = chatName;
+    }
+
+    this.chatId = chatId;
+    this.isChatCreated = true;
+
+    if (!chatList.any((chat) => chat['chatId'] == chatId)) {
+      chatList.add({'chatId': chatId, 'chatName': this.chatName!});
+    }
+
+    await writeData();
+  } catch (e) {
+    log('Ошибка в createChat: $e');
   }
+}
 
   Future<void> getModels() async {
     final FTPConnect _ftpConnect = FTPConnect(
@@ -111,10 +126,9 @@ class AppDataManager {
       user: dotenv.env['FTP_USERNAME']!,
       pass: dotenv.env['FTP_PASSWORD']!,
       securityType: SecurityType.FTPES,
-
+      timeout: 60,
       showLog: true,
     );
-
     try {
       var dbProvider = DbProvider();
       if (!dbProvider.isConnected) {

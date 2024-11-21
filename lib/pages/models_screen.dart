@@ -43,13 +43,14 @@ class _ModelsScreenState extends State<ModelsScreen> {
     List<Map<String, String>> loadedModelsList = [];
 
     for (String fileName in loadedModelFiles) {
-      String filePath = '$localPath/$fileName';
-      if (File(filePath).existsSync()) {
-        loadedModelsList.add({
-          'src': filePath,
-          'description': 'Загруженная модель: $fileName',
-        });
-      }
+      //String filePath = '$localPath/$fileName';
+      String filePath = 'assets/3dmodels/$fileName';
+      //if (File(filePath).existsSync()) {
+      loadedModelsList.add({
+        'src': filePath,
+        'description': 'Загруженная модель: $fileName',
+      });
+      //}
     }
     setState(() {
       models = loadedModelsList;

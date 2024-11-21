@@ -147,13 +147,25 @@ class DB {
           'chat_status': row[5],
           'message_text': row[6],
           'chat_article': row[7],
-          'is_admin': false, // всегда false
+          'is_admin': false, 
         });
       }).toList();
     } catch (e) {
       log('Error during database query: $e');
       return [];
     }
+  }
+
+  Future<List<List<dynamic>>> getChatList() async {
+    if (!connection.isOpen) {
+      log('Database connection is closed!');
+      return [];
+    }
+
+    // Assuming 'messages_stat' is your table name
+    List<List<dynamic>> results = await connection
+        .execute('SELECT DISTINCT chatId, chatArticle FROM messages_stat');
+    return results;
   }
 
   Future<List<MessageStat>> getMessagesStat(String chatId) async {

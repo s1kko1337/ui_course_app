@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course_project/colors/root_colors.dart';
 import 'package:flutter_course_project/components/custom_card.dart';
-import 'package:flutter_course_project/components/default_text.dart';
+import 'package:flutter_course_project/components/card_text.dart';
 import 'package:flutter_course_project/components/gray_text.dart';
 import 'package:flutter_course_project/components/orange_button_style.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
@@ -20,17 +20,23 @@ class ModelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    final cardWidth = screenWidth * 0.9; 
+    final cardHeight = screenHeight * 0.175;
     return GestureDetector(
-      onTap: onTap, // Вызывает открытие модального окна
+      onTap: onTap,
       child: CustomCard(
-        width: 140,
-        height: 140,
+        width: cardWidth,
+        height: cardHeight,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               SizedBox(
-                height: 220,
+                height:
+                    cardHeight * 0.7, 
                 child: ModelViewer(
                   backgroundColor: const Color.fromARGB(0xFF, 0xEE, 0xEE, 0xEE),
                   src: modelSrc,
@@ -40,7 +46,7 @@ class ModelCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              DefaultText(
+              CardText(
                 text: description,
               ),
             ],
@@ -54,6 +60,13 @@ class ModelCard extends StatelessWidget {
 void showModelPreviewModal(
     BuildContext context, String modelSrc, String description) {
   final colors = RootColors();
+
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
+
+  final dialogWidth = screenWidth * 0.9;
+  final dialogHeight = screenHeight * 0.8;
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -63,13 +76,14 @@ void showModelPreviewModal(
           borderRadius: BorderRadius.circular(25.0),
         ),
         child: SizedBox(
-          height: 600,
+          width: dialogWidth,
+          height: dialogHeight,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const DefaultText(
+                const CardText(
                   text: 'Интерактивное окно предпросмотра 3D модели',
                 ),
                 const SizedBox(height: 16),
@@ -87,8 +101,8 @@ void showModelPreviewModal(
                 const SizedBox(height: 16),
                 CustomCard(
                   height: 50,
-                  width: 50,
-                  child: DefaultText(
+                  width: dialogWidth * 0.8,
+                  child: CardText(
                     text: description,
                   ),
                 ),

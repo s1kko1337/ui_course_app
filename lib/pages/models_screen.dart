@@ -32,24 +32,26 @@ class _ModelsScreenState extends State<ModelsScreen> {
     }
 
     List<String> loadedModelFiles = appDataManager.loadedModels;
-
+    List<String> loadedModelInfo = appDataManager.loadedInfoAboutModels;
+    List<String> loadedModelsName = appDataManager.loadedModelsNames;
+    log(loadedModelInfo.toString());
     List<Map<String, String>> loadedModelsList = [];
 
-    for (var i in loadedModelFiles) {
+    for (int index = 0; index < loadedModelFiles.length; index++) {
+      String i = loadedModelFiles[index];
       String previewFilePath = i.replaceAll('.glb', '_preview.jpg');
-      String fileName = i
-          .split('/')
-          .last
-          .split('.')
-          .first; // Получаем имя файла без расширения
+
       loadedModelsList.add({
         'src': "file://$i",
-        'src_img': previewFilePath, 
-        'description': 'Загруженная модель: $fileName',
+        'src_img': previewFilePath,
+        'description': loadedModelsName[index],
+        'description_fr': loadedModelInfo[index],
       });
     }
+
     setState(() {
       models = loadedModelsList;
+      log(models.toString());
       isLoading = false;
     });
   }
@@ -87,7 +89,7 @@ class _ModelsScreenState extends State<ModelsScreen> {
             onTap: () => showModelPreviewModal(
               context,
               model['src']!,
-              model['description']!,
+              model['description_fr']!,
             ),
           );
         },

@@ -43,11 +43,7 @@ class MainScreenState extends State<MainScreen> {
   Future<void> _openLink(String? url) async {
     if (url != null && url.isNotEmpty) {
       final Uri uri = Uri.parse(url);
-      //if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
-      //} else {
-      //  throw 'Could not launch $url';
-      //}
     }
   }
 

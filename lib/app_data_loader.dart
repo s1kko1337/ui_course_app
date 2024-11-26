@@ -22,6 +22,8 @@ class AppDataManager {
   String? chatId;
   String? chatName;
   List<String> loadedModels = [];
+  List<String> loadedModelsNames = [];
+  List<String> loadedInfoAboutModels = [];
   List<Map<String, String>> chatList = [];
 
   Future<String> get _localPath async {
@@ -70,6 +72,8 @@ class AppDataManager {
       'chatId': chatId,
       'chatName': chatName,
       'loadedModels': loadedModels,
+      'loadedInfoAboutModels': loadedInfoAboutModels,
+      'loadedModelsNames': loadedModelsNames,
       'chatList': chatList,
     };
 
@@ -142,13 +146,14 @@ class AppDataManager {
       final directory = await getApplicationDocumentsDirectory();
       String localPath = directory.path;
       List<String> downloadedModels = [];
+      List<String> loadedInfo = [];
+      List<String> loadedModelsNamesT = [];
 
       for (var work in allWorks) {
         String fileName = work.pathToModel.split('/').last;
         String modelName = fileName;
         String modelNameJpg = fileName.split('.').first;
         String previewName = '${modelNameJpg}_preview.jpg';
-
 
         Uint8List fileBytes;
         Uint8List previewBytes;
@@ -157,9 +162,8 @@ class AppDataManager {
           previewBytes = base64Decode(work.binaryPreview);
         } catch (e) {
           log('Ошибка декодирования base64 для модели ${work.id}: $e');
-          continue; // Пропустить текущую итерацию цикла
+          continue;
         }
-
         String modelFilePath = '$localPath/$modelName';
         File modelFile = File(modelFilePath);
         await modelFile.writeAsBytes(fileBytes);
@@ -169,11 +173,13 @@ class AppDataManager {
         File previewFile = File(previewFilePath);
         await previewFile.writeAsBytes(previewBytes);
         log('Файл превью $previewName успешно сохранен.');
-
+        loadedInfo.add(work.additionalInfo);
         downloadedModels.add(modelFilePath);
+        loadedModelsNamesT.add(work.modelName);
       }
-
       loadedModels = downloadedModels;
+      loadedInfoAboutModels = loadedInfo;
+      loadedModelsNames = loadedModelsNamesT;
       await writeData();
       log('Список загруженных моделей обновлен и сохранен.');
     } catch (e) {
@@ -190,9 +196,6 @@ class AppDataManager {
   }
 
   Future<void> resetModels() async {
-    // Получаем путь к локальной директории
-    final directory = await getApplicationDocumentsDirectory();
-
     // Удаляем файлы моделей из локальной директории
     for (String fileName in loadedModels) {
       String filePath = fileName;
@@ -210,8 +213,9 @@ class AppDataManager {
       }
     }
 
-    // Очищаем список загруженных моделей и сохраняем данные
     loadedModels = [];
+    loadedInfoAboutModels = [];
+    loadedModelsNames = [];
     await writeData();
     log('Список загруженных моделей очищен и данные сохранены.');
   }

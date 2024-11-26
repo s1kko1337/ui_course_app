@@ -25,11 +25,13 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   late TabController tabController;
+  final AppDataManager appData = AppDataManager();
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(length:4 , vsync: this);
+    appData.resetModels();
     tabController.addListener(() {
       setState(() {});
     });
@@ -43,7 +45,6 @@ class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    //final colors = RootColors();
 
     return MaterialApp(
       home: ChangeNotifierProvider(

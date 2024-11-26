@@ -202,7 +202,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CustomCard(
             height: cardWidth / 1.75,
@@ -227,14 +227,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           SizedBox(
             height: screenHeight * 0.045,
           ),
-          // Include the chat dropdown if there are existing chats
           if (_chatList.isNotEmpty) _buildChatDropdown(),
           SizedBox(
             height: screenHeight * 0.045,
           ),
           CustomCard(
             height: cardWidth / 1.65,
-            width: cardHeight,
+            width: cardHeight * 1.25,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -305,7 +304,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       ),
     );
     appData.createChat(newChatId, chatName);
-    _loadChatList(); // Refresh the chat list
+    _loadChatList(); 
     setState(() {});
   }
 
@@ -318,7 +317,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   void _selectChat(String? chatId) {
     if (chatId == null) return;
 
-    // Find the selected chat
+
     final selectedChat = _chatList.firstWhere(
       (chat) => chat['chatId'] == chatId,
     );
@@ -330,17 +329,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   void _createNewChat() async {
     String chatName = _chatNameController.text.trim();
     if (chatName.isEmpty) {
-      // Show an error or return
       return;
     }
 
-    // Generate a new chat ID
     String newChatId = DateTime.now().millisecondsSinceEpoch.toString();
 
-    // Create the chat in the database if necessary
-    // For example, you can add an entry to your messages_stat table
-
-    // Update the AppDataManager
     await appData.createChat(newChatId, chatName);
     _loadChatList();
 

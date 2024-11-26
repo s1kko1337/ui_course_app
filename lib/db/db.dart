@@ -95,9 +95,11 @@ class DB {
           'modeler_id': row[1],
           'path_to_model': row[2],
           'additional_info': row[3],
+          'model_name':row[6],
+          'binary_file':row[7],
+          'binary_preview':row[8],
         });
 
-        // Логируем созданный объект Work
         log('Created Work object: $work');
 
         return work;
@@ -134,7 +136,7 @@ class DB {
 
     try {
       List<List<dynamic>> results = await connection.execute(
-        "SELECT * FROM public.messages_stat ORDER BY id ASC",
+        "SELECT * FROM public.messages_stat WHERE id_user = '${dotenv.env['USER_ID']!}' ORDER BY id ASC",
       );
 
       return results.map((row) {
@@ -147,7 +149,7 @@ class DB {
           'chat_status': row[5],
           'message_text': row[6],
           'chat_article': row[7],
-          'is_admin': false, 
+          'is_admin': false,
         });
       }).toList();
     } catch (e) {
@@ -163,8 +165,8 @@ class DB {
     }
 
     // Assuming 'messages_stat' is your table name
-    List<List<dynamic>> results = await connection
-        .execute('SELECT DISTINCT chatId, chatArticle FROM messages_stat');
+    List<List<dynamic>> results = await connection.execute(
+        "SELECT DISTINCT chatId, chatArticle FROM messages_stat WHERE id_user = '${dotenv.env['USER_ID']!}'");
     return results;
   }
 
@@ -176,7 +178,7 @@ class DB {
 
     try {
       List<List<dynamic>> results = await connection.execute(
-        "SELECT * FROM public.messages_stat WHERE chat_id = '$chatId' ORDER BY id ASC",
+        "SELECT * FROM public.messages_stat WHERE chat_id = '$chatId' AND id_user = '${dotenv.env['USER_ID']!}' ORDER BY id ASC",
       );
 
       return results.map((row) {

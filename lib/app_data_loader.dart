@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter_course_project/models/messages_stat.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ftpconnect/ftpconnect.dart';
@@ -46,7 +47,6 @@ class AppDataManager {
         chatName = jsonData['chatName'] as String?;
         loadedModels = List<String>.from(jsonData['loadedModels'] ?? []);
 
-        // Load chatList
         if (jsonData['chatList'] != null) {
           chatList = List<Map<String, String>>.from(
             jsonData['chatList'].map((chat) => Map<String, String>.from(chat)),
@@ -85,54 +85,46 @@ class AppDataManager {
     return null;
   }
 
-Future<void> createChat(String chatId, String chatName) async {
-  try {
-    final allMessages = await DbProvider().getGlobalMessagesStat();
+  Future<void> createChat(String chatId, String chatName) async {
+    try {
+      final allMessages = await DbProvider().getGlobalMessagesStat();
 
-    int? chatIdInt = int.tryParse(chatId);
+      int? chatIdInt = int.tryParse(chatId);
 
-    if (chatIdInt == null) {
-      log('Ошибка: chatId "$chatId" не является корректным числом.');
-      return;
+      if (chatIdInt == null) {
+        log('Ошибка: chatId "$chatId" не является корректным числом.');
+        return;
+      }
+
+      MessageStat? messageWithChatId = firstWhereOrNull(
+        allMessages,
+        (message) => message.chatId == chatIdInt,
+      );
+
+      if (messageWithChatId != null && messageWithChatId.chatArticle != null) {
+        this.chatName = messageWithChatId.chatArticle!;
+      } else {
+        this.chatName = chatName;
+      }
+
+      this.chatId = chatId;
+      this.isChatCreated = true;
+
+      if (!chatList.any((chat) => chat['chatId'] == chatId)) {
+        chatList.add({'chatId': chatId, 'chatName': this.chatName!});
+      }
+
+      await writeData();
+    } catch (e) {
+      log('Ошибка в createChat: $e');
     }
-
-    MessageStat? messageWithChatId = firstWhereOrNull(
-      allMessages,
-      (message) => message.chatId == chatIdInt,
-    );
-
-    if (messageWithChatId != null && messageWithChatId.chatArticle != null) {
-      this.chatName = messageWithChatId.chatArticle!;
-    } else {
-      this.chatName = chatName;
-    }
-
-    this.chatId = chatId;
-    this.isChatCreated = true;
-
-    if (!chatList.any((chat) => chat['chatId'] == chatId)) {
-      chatList.add({'chatId': chatId, 'chatName': this.chatName!});
-    }
-
-    await writeData();
-  } catch (e) {
-    log('Ошибка в createChat: $e');
   }
-}
 
   Future<void> getModels() async {
-    final FTPConnect _ftpConnect = FTPConnect(
-      dotenv.env['FTP_HOST']!,
-      user: dotenv.env['FTP_USERNAME']!,
-      pass: dotenv.env['FTP_PASSWORD']!,
-      securityType: SecurityType.FTPES,
-      timeout: 60,
-      showLog: true,
-    );
     try {
       var dbProvider = DbProvider();
       if (!dbProvider.isConnected) {
-        await dbProvider.connect(); // Добавили await здесь
+        await dbProvider.connect();
       }
       var allWorks = await dbProvider.getWorks();
       log(allWorks.toString());
@@ -142,52 +134,44 @@ Future<void> createChat(String chatId, String chatName) async {
         log('Модель ID: ${work.id}, Путь к модели: ${work.pathToModel}');
       }
 
-      // Проверяем, есть ли модели для загрузки
       if (allWorks.isEmpty) {
         log('Нет моделей для загрузки.');
         return;
       }
 
-      // После успешного получения данных из базы начинаем загрузку с FTP
       final directory = await getApplicationDocumentsDirectory();
       String localPath = directory.path;
       List<String> downloadedModels = [];
 
-      // Подключаемся к FTP-серверу
-      await _ftpConnect.connect();
-      log('Подключение к FTP-серверу установлено.');
-
       for (var work in allWorks) {
-        String modelPath = '/home/ftpuser/ftp/${work.pathToModel}';
-        String fileName = modelPath.split('/').last;
-        File localFile = File('$localPath/$fileName');
+        String fileName = work.pathToModel.split('/').last;
+        String modelName = fileName;
+        String modelNameJpg = fileName.split('.').first;
+        String previewName = '${modelNameJpg}_preview.jpg';
 
-        // Проверяем, была ли модель уже загружена
-        if (!localFile.existsSync()) {
-          bool result;
-          try {
-            // Загружаем файл с FTP
-            result = await _ftpConnect.downloadFile(modelPath, localFile);
-          } catch (e) {
-            log('Ошибка при загрузке файла $modelPath: $e');
-            continue;
-          }
 
-          if (result) {
-            log('Файл $fileName успешно загружен.');
-            downloadedModels.add(fileName);
-          } else {
-            log('Ошибка при загрузке файла $fileName.');
-          }
-        } else {
-          log('Файл $fileName уже существует локально.');
-          downloadedModels.add(fileName);
+        Uint8List fileBytes;
+        Uint8List previewBytes;
+        try {
+          fileBytes = base64Decode(work.binaryFile);
+          previewBytes = base64Decode(work.binaryPreview);
+        } catch (e) {
+          log('Ошибка декодирования base64 для модели ${work.id}: $e');
+          continue; // Пропустить текущую итерацию цикла
         }
-      }
 
-      // Отключаемся от FTP-сервера
-      await _ftpConnect.disconnect();
-      log('Отключение от FTP-сервера.');
+        String modelFilePath = '$localPath/$modelName';
+        File modelFile = File(modelFilePath);
+        await modelFile.writeAsBytes(fileBytes);
+        log('Файл модели $modelName успешно сохранен.');
+
+        String previewFilePath = '$localPath/$previewName';
+        File previewFile = File(previewFilePath);
+        await previewFile.writeAsBytes(previewBytes);
+        log('Файл превью $previewName успешно сохранен.');
+
+        downloadedModels.add(modelFilePath);
+      }
 
       loadedModels = downloadedModels;
       await writeData();
@@ -197,21 +181,21 @@ Future<void> createChat(String chatId, String chatName) async {
     }
   }
 
-  void resetChat() {
+  void resetChats() {
     chatId = null;
     chatName = null;
     isChatCreated = false;
+    chatList = [];
     writeData();
   }
 
   Future<void> resetModels() async {
     // Получаем путь к локальной директории
     final directory = await getApplicationDocumentsDirectory();
-    String localPath = directory.path;
 
     // Удаляем файлы моделей из локальной директории
     for (String fileName in loadedModels) {
-      String filePath = '$localPath/$fileName';
+      String filePath = fileName;
       final file = File(filePath);
 
       if (await file.exists()) {

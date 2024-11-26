@@ -81,7 +81,6 @@ class _MessagesListState extends State<MessagesList> {
                 isAdmin ? const Radius.circular(20) : const Radius.circular(0),
           );
 
-          // Форматируем дату в часовом поясе Москвы (UTC+3)
           final DateTime createdAtInMoscow =
               message.createdAt.toUtc().add(const Duration(hours: 3));
           final String formattedDate =

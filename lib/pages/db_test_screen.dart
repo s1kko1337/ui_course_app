@@ -17,7 +17,6 @@ class DbTestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = RootColors();
-    final dbProvider = Provider.of<DbProvider>(context);
     final AppDataManager appData = AppDataManager();
 
     return Center(
@@ -27,30 +26,12 @@ class DbTestScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            DefaultText(text: dbProvider.statusMessage),
-            const SizedBox(height: 20),
             ElevatedButton(
               style: ButtonStyles.elevatedButtonStyle(colors),
               onPressed: () async {
-                await dbProvider.connect();
+                appData.resetChats();
               },
-              child: const GrayText(text: 'Подключиться к базе'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ButtonStyles.elevatedButtonStyle(colors),
-              onPressed: () async {
-                await dbProvider.getWorks();
-              },
-              child: const GrayText(text: 'Тестовый запрос к базе'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ButtonStyles.elevatedButtonStyle(colors),
-              onPressed: () async {
-                appData.resetModels();
-              },
-              child: const GrayText(text: 'Тестовый запрос к базе'),
+              child: const GrayText(text: 'Сбросить список чатов'),
             ),
           ],
         ),

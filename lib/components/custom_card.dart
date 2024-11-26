@@ -19,7 +19,7 @@ class CustomCard extends StatelessWidget {
     final colors = RootColors();
     return Container(
       decoration: BoxDecoration(
-        color: colors.CardCol, // Цвет фона
+        color: colors.CardCol,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(

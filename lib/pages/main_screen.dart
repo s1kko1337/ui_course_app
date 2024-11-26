@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; 
+import 'dart:async';
 import 'package:flutter_course_project/components/custom_card.dart';
 import 'package:flutter_course_project/colors/root_colors.dart';
 import 'package:flutter_course_project/components/default_text.dart';
@@ -18,13 +18,13 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   bool _isConnected = false;
-  Timer? _timer; 
+  bool isDataLoaded = false;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _connectToDatabase();
-     _startTimer();
   }
 
   Future<void> _connectToDatabase() async {
@@ -50,14 +50,11 @@ class MainScreenState extends State<MainScreen> {
       //}
     }
   }
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      _connectToDatabase(); 
-    });
-  }
-   @override
+
+
+  @override
   void dispose() {
-    _timer?.cancel(); // Отменяем таймер при уничтожении виджета
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -91,7 +88,7 @@ class MainScreenState extends State<MainScreen> {
                     );
                   } else {
                     final user = snapshot.data!.first;
-
+                    isDataLoaded = true;
                     return CustomCard(
                       height: 313,
                       width: 369,

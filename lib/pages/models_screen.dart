@@ -1,10 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_course_project/app_data_loader.dart';
 import 'package:flutter_course_project/components/model_card.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:flutter_course_project/app_data_loader.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 class ModelsScreen extends StatefulWidget {
   const ModelsScreen({super.key});
@@ -32,25 +31,22 @@ class _ModelsScreenState extends State<ModelsScreen> {
       await appDataManager.getModels();
     }
 
-    // Получаем список загруженных моделей
     List<String> loadedModelFiles = appDataManager.loadedModels;
 
-    // Получаем путь к локальной директории
-    final directory = await getApplicationDocumentsDirectory();
-    String localPath = directory.path;
-
-    // Формируем список моделей для отображения
     List<Map<String, String>> loadedModelsList = [];
 
-    for (String fileName in loadedModelFiles) {
-      //String filePath = '$localPath/$fileName';
-      String filePath = 'assets/3dmodels/$fileName';
-      //if (File(filePath).existsSync()) {
+    for (var i in loadedModelFiles) {
+      String previewFilePath = i.replaceAll('.glb', '_preview.jpg');
+      String fileName = i
+          .split('/')
+          .last
+          .split('.')
+          .first; // Получаем имя файла без расширения
       loadedModelsList.add({
-        'src': filePath,
+        'src': "file://$i",
+        'src_img': previewFilePath, 
         'description': 'Загруженная модель: $fileName',
       });
-      //}
     }
     setState(() {
       models = loadedModelsList;
@@ -86,6 +82,7 @@ class _ModelsScreenState extends State<ModelsScreen> {
           final model = models[index];
           return ModelCard(
             modelSrc: model['src']!,
+            imageSrc: model['src_img']!,
             description: model['description']!,
             onTap: () => showModelPreviewModal(
               context,

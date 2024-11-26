@@ -7,8 +7,8 @@ class MessageStat {
   final int chatId;
   final String chatStatus;
   final String messageText;
-  final String? chatArticle; // может быть null
-  final bool? isAdmin; // может быть null
+  final String? chatArticle; 
+  final bool? isAdmin; 
 
   MessageStat({
     required this.id,
@@ -22,7 +22,6 @@ class MessageStat {
     this.isAdmin,
   });
 
-  // Метод для создания объекта из Map (например, из JSON)
   factory MessageStat.fromMap(Map<String, dynamic> map) {
     return MessageStat(
       id: map['id'],
@@ -37,7 +36,6 @@ class MessageStat {
     );
   }
 
-  // Метод для преобразования объекта в Map (например, для сохранения в БД)
   Map<String, dynamic> toMap() {
     return {
       'id': id,

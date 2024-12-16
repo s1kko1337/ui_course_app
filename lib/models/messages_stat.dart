@@ -8,7 +8,7 @@ class MessageStat {
   final String chatStatus;
   final String messageText;
   final String? chatArticle; 
-  final bool? isAdmin; 
+  final bool isAdmin; 
 
   MessageStat({
     required this.id,
@@ -19,7 +19,7 @@ class MessageStat {
     required this.chatStatus,
     required this.messageText,
     this.chatArticle,
-    this.isAdmin,
+    required this.isAdmin,
   });
 
   factory MessageStat.fromMap(Map<String, dynamic> map) {
@@ -48,5 +48,20 @@ class MessageStat {
       'chat_article': chatArticle,
       'is_admin': isAdmin,
     };
+  }
+
+   @override
+  String toString() {
+    return 'MessageStat('
+        'id: $id, '
+        'createdAt: $createdAt, '
+        'idUser: $idUser, '
+        'updatedAt: $updatedAt, '
+        'chatId: $chatId, '
+        'chatStatus: $chatStatus, '
+        'messageText: $messageText, '
+        'chatArticle: $chatArticle, '
+        'isAdmin: $isAdmin'
+        ')';
   }
 }

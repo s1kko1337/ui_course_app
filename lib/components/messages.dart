@@ -1,4 +1,5 @@
 import 'dart:async'; // Добавлен импорт для Timer
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_course_project/colors/root_colors.dart';
 import 'package:flutter_course_project/components/default_text.dart';
@@ -54,7 +55,7 @@ class _MessagesListState extends State<MessagesList> {
 
   @override
   void dispose() {
-    _timer?.cancel(); // Отменяем таймер при уничтожении виджета
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -67,9 +68,12 @@ class _MessagesListState extends State<MessagesList> {
         itemCount: _messages.length,
         itemBuilder: (context, index) {
           final message = _messages[index];
-          final isAdmin = message.isAdmin ?? false;
+          final isAdmin = message.isAdmin;
           final alignment =
               isAdmin ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+          //log(isAdmin.toString());
+           log(_messages.toString());
+          log(message.toString());
           final containerAlignment =
               isAdmin ? Alignment.topLeft : Alignment.topRight;
           final borderRadius = BorderRadius.only(

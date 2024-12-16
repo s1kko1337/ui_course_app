@@ -188,11 +188,11 @@ class DB {
           'id_user': row[2],
           'updated_at': row[3].toString(),
           'chat_id':
-              row[4], // предполагается, что chat_id находится в этом индексе
+              row[4], 
           'chat_status': row[5],
           'message_text': row[6],
           'chat_article': row[7],
-          'is_admin': false, // всегда false
+          'is_admin': row[8], 
         });
       }).toList();
     } catch (e) {

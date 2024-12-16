@@ -196,7 +196,6 @@ class AppDataManager {
   }
 
   Future<void> resetModels() async {
-    // Удаляем файлы моделей из локальной директории
     for (String fileName in loadedModels) {
       String filePath = fileName;
       final file = File(filePath);

@@ -6,16 +6,20 @@ import 'package:flutter_course_project/components/custom_card.dart';
 import 'package:flutter_course_project/components/card_text.dart';
 import 'package:flutter_course_project/components/gray_text.dart';
 import 'package:flutter_course_project/components/orange_button_style.dart';
+import 'package:flutter_course_project/db/db_provider.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:provider/provider.dart';
 
 class ModelCard extends StatelessWidget {
   final String modelSrc;
   final String imageSrc;
   final String description;
   final VoidCallback onTap;
+  final int id;
 
   const ModelCard({
     super.key,
+    required this.id,
     required this.modelSrc,
     required this.imageSrc,
     required this.description,
@@ -69,7 +73,11 @@ class ModelCard extends StatelessWidget {
 }
 
 void showModelPreviewModal(
-    BuildContext context, String modelSrc, String description) {
+    BuildContext context, String modelSrc, String description, int id) {
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await Provider.of<DbProvider>(context, listen: false)
+        .incrementViewsModel(id);
+  });
   final colors = RootColors();
 
   final screenWidth = MediaQuery.of(context).size.width;

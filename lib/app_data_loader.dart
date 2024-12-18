@@ -24,6 +24,7 @@ class AppDataManager {
   List<String> loadedModels = [];
   List<String> loadedModelsNames = [];
   List<String> loadedInfoAboutModels = [];
+  List<int> loadedModelsId = [];
   List<Map<String, String>> chatList = [];
 
   Future<String> get _localPath async {
@@ -75,6 +76,7 @@ class AppDataManager {
       'loadedInfoAboutModels': loadedInfoAboutModels,
       'loadedModelsNames': loadedModelsNames,
       'chatList': chatList,
+      'loadedModelsId' :loadedModelsId,
     };
 
     String jsonString = jsonEncode(jsonData);
@@ -148,6 +150,7 @@ class AppDataManager {
       List<String> downloadedModels = [];
       List<String> loadedInfo = [];
       List<String> loadedModelsNamesT = [];
+      List<int> loadedModelsIDT = [];
 
       for (var work in allWorks) {
         String fileName = work.pathToModel.split('/').last;
@@ -176,10 +179,13 @@ class AppDataManager {
         loadedInfo.add(work.additionalInfo);
         downloadedModels.add(modelFilePath);
         loadedModelsNamesT.add(work.modelName);
+        loadedModelsIDT.add(work.id);
       }
       loadedModels = downloadedModels;
       loadedInfoAboutModels = loadedInfo;
       loadedModelsNames = loadedModelsNamesT;
+      loadedModelsId = loadedModelsIDT;
+
       await writeData();
       log('Список загруженных моделей обновлен и сохранен.');
     } catch (e) {

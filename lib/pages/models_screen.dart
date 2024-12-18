@@ -13,7 +13,7 @@ class ModelsScreen extends StatefulWidget {
 }
 
 class _ModelsScreenState extends State<ModelsScreen> {
-  List<Map<String, String>> models = [];
+  List<Map<String, dynamic>> models = [];
   bool isLoading = true;
 
   @override
@@ -34,8 +34,9 @@ class _ModelsScreenState extends State<ModelsScreen> {
     List<String> loadedModelFiles = appDataManager.loadedModels;
     List<String> loadedModelInfo = appDataManager.loadedInfoAboutModels;
     List<String> loadedModelsName = appDataManager.loadedModelsNames;
+    List<int> loadedModelID = appDataManager.loadedModelsId;
     log(loadedModelInfo.toString());
-    List<Map<String, String>> loadedModelsList = [];
+    List<Map<String, dynamic>> loadedModelsList = [];
 
     for (int index = 0; index < loadedModelFiles.length; index++) {
       String i = loadedModelFiles[index];
@@ -46,6 +47,7 @@ class _ModelsScreenState extends State<ModelsScreen> {
         'src_img': previewFilePath,
         'description': loadedModelsName[index],
         'description_fr': loadedModelInfo[index],
+        'id': loadedModelID[index]
       });
     }
 
@@ -86,10 +88,12 @@ class _ModelsScreenState extends State<ModelsScreen> {
             modelSrc: model['src']!,
             imageSrc: model['src_img']!,
             description: model['description']!,
+            id: model['id']!,
             onTap: () => showModelPreviewModal(
               context,
               model['src']!,
               model['description_fr']!,
+              model['id']!,
             ),
           );
         },

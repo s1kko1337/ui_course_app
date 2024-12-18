@@ -98,6 +98,26 @@ class DbProvider extends ChangeNotifier {
     }
   }
 
+
+  Future<void> incrementViews() async {
+    if (_isConnected) {
+      await _db.incrementViews();
+      notifyListeners();
+    } else {
+      _statusMessage = 'No connection available!';
+      notifyListeners();
+    }
+  }
+    Future<void> incrementViewsModel(int modelID) async {
+    if (_isConnected) {
+      await _db.incrementViewsModel(modelID);
+      notifyListeners();
+    } else {
+      _statusMessage = 'No connection available!';
+      notifyListeners();
+    }
+  }
+  
   Future<void> closeConnection() async {
     if (_isConnected) {
       await _db.closeConnection();

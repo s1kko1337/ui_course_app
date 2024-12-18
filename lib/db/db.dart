@@ -95,9 +95,9 @@ class DB {
           'modeler_id': row[1],
           'path_to_model': row[2],
           'additional_info': row[3],
-          'model_name':row[6],
-          'binary_file':row[7],
-          'binary_preview':row[8],
+          'model_name': row[6],
+          'binary_file': row[7],
+          'binary_preview': row[8],
         });
 
         log('Created Work object: $work');
@@ -187,12 +187,11 @@ class DB {
           'created_at': row[1].toString(),
           'id_user': row[2],
           'updated_at': row[3].toString(),
-          'chat_id':
-              row[4], 
+          'chat_id': row[4],
           'chat_status': row[5],
           'message_text': row[6],
           'chat_article': row[7],
-          'is_admin': row[8], 
+          'is_admin': row[8],
         });
       }).toList();
     } catch (e) {
@@ -212,6 +211,39 @@ class DB {
         "INSERT INTO public.messages_stat (id, created_at, id_user, updated_at, chat_id, chat_status, message_text, chat_article, is_admin) VALUES "
         "('${messageStat.id}', '${messageStat.createdAt.toIso8601String()}', '${messageStat.idUser}', '${messageStat.updatedAt.toIso8601String()}', "
         "'${messageStat.chatId}', '${messageStat.chatStatus}', '${messageStat.messageText}', '${messageStat.chatArticle}', false)",
+      );
+      log('MessageStat added successfully');
+    } catch (e) {
+      log('Error adding MessageStat: $e');
+    }
+  }
+
+  Future<void> incrementViews() async {
+    if (!connection.isOpen) {
+      log('Database connection is closed!');
+      return;
+    }
+    final portfolioId = dotenv.env['USER_ID']!;
+
+    try {
+      await connection.execute(
+        "UPDATE public.portfolios SET views = views + 1 WHERE id = '$portfolioId'",
+      );
+      log('MessageStat added successfully');
+    } catch (e) {
+      log('Error adding MessageStat: $e');
+    }
+  }
+
+    Future<void> incrementViewsModel(int modelID) async {
+    if (!connection.isOpen) {
+      log('Database connection is closed!');
+      return;
+    }
+
+    try {
+      await connection.execute(
+        "UPDATE public.works SET views = views + 1 WHERE id = '$modelID'",
       );
       log('MessageStat added successfully');
     } catch (e) {

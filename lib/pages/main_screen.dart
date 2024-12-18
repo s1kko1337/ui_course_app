@@ -31,6 +31,7 @@ class MainScreenState extends State<MainScreen> {
     final dbProvider = Provider.of<DbProvider>(context, listen: false);
     if (dbProvider.isConnected) {
       _isConnected = true;
+      await Provider.of<DbProvider>(context, listen: false).incrementViews();
     } else {
       await dbProvider.connect();
     }
@@ -47,6 +48,7 @@ class MainScreenState extends State<MainScreen> {
     }
   }
 
+  
 
   @override
   void dispose() {
@@ -56,7 +58,8 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var user_id = int.parse(dotenv.env['USER_ID']!);
+
+    var userId = int.parse(dotenv.env['USER_ID']!);
     final colors = RootColors();
     final dbProvider = Provider.of<DbProvider>(context);
     return SafeArea(
@@ -67,7 +70,7 @@ class MainScreenState extends State<MainScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FutureBuilder<List<Portfolios>>(
-                future: dbProvider.getPortfolio(user_id),
+                future: dbProvider.getPortfolio(userId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
@@ -97,7 +100,7 @@ class MainScreenState extends State<MainScreen> {
                 height: 25,
               ),
               FutureBuilder<List<Portfolios>>(
-                future: dbProvider.getPortfolio(user_id),
+                future: dbProvider.getPortfolio(userId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();

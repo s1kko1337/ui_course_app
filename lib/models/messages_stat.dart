@@ -1,4 +1,3 @@
-import 'dart:convert';
 class MessageStat {
   final int id;
   final DateTime createdAt;

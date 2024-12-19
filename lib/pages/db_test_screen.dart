@@ -1,13 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_course_project/app_data_loader.dart';
-import 'package:flutter_course_project/components/default_text.dart';
 import 'package:flutter_course_project/components/gray_text.dart';
 import 'package:flutter_course_project/components/orange_button_style.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_course_project/db/db_provider.dart';
-import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:flutter_course_project/components/custom_card.dart';
 import 'package:flutter_course_project/colors/root_colors.dart';
 

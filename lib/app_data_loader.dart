@@ -3,11 +3,8 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_course_project/models/messages_stat.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:ftpconnect/ftpconnect.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_course_project/db/db_provider.dart';
-import 'package:flutter_course_project/db/db.dart';
 //import 'package:pure_ftp/pure_ftp.dart';
 
 class AppDataManager {

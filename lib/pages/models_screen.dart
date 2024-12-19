@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_course_project/app_data_loader.dart';
 import 'package:flutter_course_project/components/model_card.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class ModelsScreen extends StatefulWidget {
   const ModelsScreen({super.key});

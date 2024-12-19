@@ -4,8 +4,6 @@ import 'package:flutter_course_project/models/portfolios.dart';
 import 'package:flutter_course_project/models/works.dart';
 import 'dart:developer';
 import 'dart:core';
-// import 'dart:io' show Platform;
-// import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DB {
@@ -81,7 +79,7 @@ class DB {
 
     try {
       List<List<dynamic>> results = await connection.execute(
-        "SELECT * FROM public.works",
+        "SELECT * FROM public.works WHERE modeler_id = '${dotenv.env['USER_ID']!}'",
       );
 
       return results.map((row) {

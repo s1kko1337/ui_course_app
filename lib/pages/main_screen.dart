@@ -40,7 +40,6 @@ class MainScreenState extends State<MainScreen> {
     });
   }
 
-  // Функция для открытия ссылки
   Future<void> _openLink(String? url) async {
     if (url != null && url.isNotEmpty) {
       final Uri uri = Uri.parse(url);

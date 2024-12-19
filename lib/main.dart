@@ -44,7 +44,6 @@ class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   @override
-  @override
 Widget build(BuildContext context) {
   String backgroundImage;
 

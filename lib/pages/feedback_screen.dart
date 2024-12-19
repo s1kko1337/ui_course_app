@@ -158,6 +158,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               decoration: const InputDecoration(
                 hintText: 'Введите сообщение',
               ),
+              style: TextStyle(
+                      color: colors.TextCol,
+                      fontSize: 14,
+                    ),
             ),
           ),
           IconButton(

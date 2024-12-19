@@ -25,8 +25,8 @@ class _MessagesListState extends State<MessagesList> {
   @override
   void initState() {
     super.initState();
-    _fetchMessages(); // Начальное получение сообщений
-    _startTimer(); // Запуск таймера для периодического обновления
+    _fetchMessages();
+    _startTimer(); 
   }
 
   void _startTimer() {

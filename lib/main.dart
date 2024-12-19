@@ -44,38 +44,57 @@ class MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
+  @override
+Widget build(BuildContext context) {
+  String backgroundImage;
 
-    return MaterialApp(
-      home: ChangeNotifierProvider(
-        create: (_) => DbProvider(),
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          extendBodyBehindAppBar: true,
-          appBar: MyAppBar(tabController: tabController),
-          body: Stack(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/img/bg_main.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: TabBarView(
-                  controller: tabController,
-                  children: const <Widget>[
-                    MainScreen(),
-                    ModelsScreen(),
-                    FeedbackScreen(),
-                    DbTestScreen(),
-                  ],
+  switch(tabController.index) {
+    case 0:
+      backgroundImage = 'assets/img/bg_main.png';
+      break;
+    case 1:
+      backgroundImage = 'assets/img/bg_models.png';
+      break;
+    case 2:
+      backgroundImage = 'assets/img/bg_feedb.png';
+      break;
+    case 3:
+      backgroundImage = 'assets/img/bg_feedb.png';
+      break;
+    default:
+      backgroundImage = 'assets/img/bg_main.png';
+  }
+
+  return MaterialApp(
+    home: ChangeNotifierProvider(
+      create: (_) => DbProvider(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        extendBodyBehindAppBar: true,
+        appBar: MyAppBar(tabController: tabController),
+        body: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(backgroundImage),
+                  fit: BoxFit.cover,
                 ),
               ),
-            ],
-          ),
+              child: TabBarView(
+                controller: tabController,
+                children: const <Widget>[
+                  MainScreen(),
+                  ModelsScreen(),
+                  FeedbackScreen(),
+                  DbTestScreen(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
